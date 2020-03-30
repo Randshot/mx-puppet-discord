@@ -341,17 +341,10 @@ Additionally you will be invited to guild channels as messages are sent in them.
 			await sendMessage("Puppet not found!");
 			return;
 		}
-		// This is an ugly hotfix to temporarily enable custom user statuses in case
-		// it was turned off.
-		const oldValue = this.app.puppet.config.presence.disableStatusState;
-		this.app.puppet.config.presence.disableStatusState = false;
-
 		for (const user of p.client.users.array()) {
-			const presence = user.presence;
-			presence.activities = [];
-			await this.app.discord.updatePresence(puppetId, presence);
+			const remoteUser = this.app.matrix.getRemoteUser(puppetId, user!);
+			await this.app.puppet.setUserStatus(remoteUser, "");
 		}
-		this.app.puppet.config.presence.disableStatusState = oldValue;
 		await sendMessage("Cleared the presence of all users!");
 	}
 }

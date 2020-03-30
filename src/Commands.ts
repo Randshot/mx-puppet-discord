@@ -335,21 +335,20 @@ Additionally you will be invited to guild channels as messages are sent in them.
 		}
 	}
 
-	public async commandClearAllPresence(puppetId: number, param: string, sendMessage: SendMessageFn) {
+	public async commandClearAllStatus(puppetId: number, param: string, sendMessage: SendMessageFn) {
 		const p = this.app.puppets[puppetId];
 		if (!p) {
 			await sendMessage("Puppet not found!");
 			return;
 		}
-		// This is an ugly hotfix to temporarily enable custom user statuses in case
-		// it was turned off.
-		const oldValue = this.app.puppet.config.presence.disableStatusState;
-		this.app.puppet.config.presence.disableStatusState = false;
+		if (this.app.puppet.config.presence.disableStatusState) {
+			await sendMessage("Please set presence.disableStatusState to false for this command! After running it, you can set it to true again.");
+			return;
+		}
 		for (const user of p.client.users.array()) {
 			const remoteUser = this.app.matrix.getRemoteUser(puppetId, user!);
 			await this.app.puppet.setUserStatus(remoteUser, "");
 		}
-		this.app.puppet.config.presence.disableStatusState = oldValue;
 		await sendMessage("Cleared the presence of all users!");
 	}
 }

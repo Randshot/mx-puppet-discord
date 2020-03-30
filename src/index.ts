@@ -230,12 +230,14 @@ Usage: \`addfriend <puppetId> <friend>\`, friend can be either the full username
 
 Usage: \`removefriend <puppetId> <friend>\`, friend can be either the full username or the user ID`,
 	});
-	puppet.registerCommand("clearallpresence", {
-		fn: app.commands.commandClearAllPresence.bind(app.commands),
-		help: `Clear the presence of all users
+	if (this.app.puppet.config.presence.disableStatusState) {
+		puppet.registerCommand("clearallstatus", {
+			fn: app.commands.commandClearAllStatus.bind(app.commands),
+			help: `Clear the user status of all users
 
-Usage: \`clearallpresence <puppetId>\``,
-	});
+	Usage: \`clearallstatus <puppetId>\``,
+		});
+	}
 	await puppet.start();
 }
 
